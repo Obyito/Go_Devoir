@@ -1,47 +1,35 @@
-package cmd
+package main
 
+// Imports cobra et fmt
 import "github.com/spf13/cobra"
-import "fmt"
+import "database/sql"
+import _"github.com/mattn/go-sqlite3"
 
-// Gestionnaire de commandes disponibles
+const driver = "sqlite3"
+const path = "commande.db"
+
+// Création d'une db avec mysql
 var devoirCmd = &cobra.Command{
 	Use:   "devoir",
 	Short: "Programme de commandes",
 	Long: `Liste des commandes`,
-	Run: func(cmd *cobra.Command, args []string) {
-	fmt.Println("Commande disponibles :")
-	},
-}
+	Run: func (cmd *cobra.Command, args []string) {
+	db, _ := sql.Open(driver, path)
+	query :=
+			`
+			CREATE TABLE IF NOT EXISTS documents (
+			id INTEGER NOT NULL PRIMARY KEY,
+			header TEXT,
+			footer TEXT );
+			CREATE TABLE IF NOT EXISTS lignes (
+			id INTEGER NOT NULL PRIMARY KEY,
+			document INT(3),
+			tarif INT(255),
+			descritpion TEXT,
+			CONSTRAINT fk_ligne_document FOREIGN KEY (document) REFERENCE documents (id)
+			ON UPDATE CASCADE ON DELETE CASCADE );
+			`
+	_, _ = db.Exec(query)
+	}}
 
-// Première commande qui affiche un
-var devoir1Cmd = &cobra.Command{
-	Use:   "un",
-	Short: "Progamme devoir un",
-	Long: `Voir le programme devoir un`,
-	Run: func(cmd *cobra.Command, args []string) {
-	fmt.Println("un")
-	},
-}
-
-// Deuxième commande qui affiche deux
-var devoir2Cmd = &cobra.Command{
-	Use:   "deux",
-	Short: "Programme devoir un",
-	Long: `Voir le programme devoir deux`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("deux")
-	},
-}
-
-func init() {
-	devoirCmd.AddCommand(devoir1Cmd)
-	devoirCmd.AddCommand(devoir2Cmd)
-}
-
-func Execute() {
-	devoirCmd.Execute()
-}
-
-func main () {
-	Execute()
-}
+// Pour git push sur le lab je n'ai pas mon code eemi et via SSH un peu compliquer ne l'ayant jamais fait
